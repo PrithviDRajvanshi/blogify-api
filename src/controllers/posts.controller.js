@@ -1,19 +1,22 @@
 const getAllPosts = (req, res) => {
-  res.status(200).json({
+  // In the future this should fetch from a DB/service.
+  const posts = [];
+
+  return res.status(200).json({
     success: true,
-    data: {
-      message: "Route handled by postController.getAllPosts"
-    }
+    data: { posts },
   });
 };
 
 const getPostById = (req, res) => {
   const requestedPostId = req.params.postId;
-  res.status(200).json({
+
+  // In the future this should fetch a real post by ID.
+  const post = { id: requestedPostId };
+
+  return res.status(200).json({
     success: true,
-    data: {
-      message: `You requested data for Post ID: ${requestedPostId}`
-    }
+    data: { post },
   });
 };
 
