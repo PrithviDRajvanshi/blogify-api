@@ -123,7 +123,4 @@ module.exports = {
   deletePost,
 };
 
-module.exports = {
-  getAllPosts,
-  getPostById,
-};
+
