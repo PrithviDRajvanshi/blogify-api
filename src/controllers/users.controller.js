@@ -1,13 +1,27 @@
-const getSingleUser = (req, res) => {
-  // Express puts all URL parameters into the `req.params` object.
-  // The property name matches the parameter name from our route definition.
-  const requestedUserId = req.params.userId;
+const userService = require('../services/users.service');
 
-  // Now we have the ID! We can use it to fetch the user from a database.
-  // For now, let's just send it back to confirm we got it.
-  res.status(200).json({
-    message: `You requested data for User ID: ${requestedUserId}`
-  });
+const getSingleUser = async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const user = await userService.getUserById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: { user },
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to fetch user',
+      error: err.message,
+    });
+  }
 };
 
 module.exports = {
