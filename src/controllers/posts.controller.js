@@ -44,10 +44,13 @@ const getPostById = async (req, res) => {
   }
 };
 
-// POST /api/v1/posts
+// POST /api/v1/posts (Protected - Requires Authentication)
 const createPost = async (req, res) => {
   try {
     const payload = req.body;
+    // Attach the current user as the author
+    payload.author = req.user.id;
+
     const newPost = await postService.createPost(payload);
     return res.status(201).json({
       success: true,
@@ -62,19 +65,31 @@ const createPost = async (req, res) => {
   }
 };
 
-// PATCH /api/v1/posts/:postId
+// PATCH /api/v1/posts/:postId (Protected - Requires Authentication & Ownership)
 const updatePost = async (req, res) => {
   const { postId } = req.params;
   const updates = req.body;
 
   try {
-    const updated = await postService.updatePost(postId, updates);
-    if (!updated) {
+    // First, get the post to check ownership
+    const post = await postService.getPostById(postId);
+    if (!post) {
       return res.status(404).json({
         success: false,
         message: 'Post not found',
       });
     }
+
+    // Check if user is the author (Authorization check)
+    if (post.author._id.toString() !== req.user.id) {
+      return res.status(403).json({
+        success: false,
+        message: 'You are not authorized to update this post',
+      });
+    }
+
+    // Update the post
+    const updated = await postService.updatePost(postId, updates);
 
     return res.status(200).json({
       success: true,
@@ -89,22 +104,34 @@ const updatePost = async (req, res) => {
   }
 };
 
-// DELETE /api/v1/posts/:postId
+// DELETE /api/v1/posts/:postId (Protected - Requires Authentication & Ownership)
 const deletePost = async (req, res) => {
   const { postId } = req.params;
 
   try {
-    const deleted = await postService.deletePost(postId);
-    if (!deleted) {
+    // First, get the post to check ownership
+    const post = await postService.getPostById(postId);
+    if (!post) {
       return res.status(404).json({
         success: false,
         message: 'Post not found',
       });
     }
 
+    // Check if user is the author (Authorization check)
+    if (post.author._id.toString() !== req.user.id) {
+      return res.status(403).json({
+        success: false,
+        message: 'You are not authorized to delete this post',
+      });
+    }
+
+    // Delete the post
+    const deleted = await postService.deletePost(postId);
+
     return res.status(200).json({
       success: true,
-      message: 'Post deleted',
+      message: 'Post deleted successfully',
     });
   } catch (err) {
     return res.status(500).json({
