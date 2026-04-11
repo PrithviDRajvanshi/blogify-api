@@ -38,9 +38,11 @@ All routes are prefixed with `/api/v1`.
 | GET    | `/posts/:postId`   | Get one post by ID                  |
 | POST   | `/posts`           | Create a new post                   |
 | PATCH  | `/posts/:postId`   | Update a post                      |
-| DELETE | `/posts/:postId`   | Remove a post                      |
+| POST   | `/auth/register`  | Register a new user                 |
+| POST   | `/auth/login`     | Login user                         |
+| POST   | `/auth/logout`    | Logout user                        |
 
-> **Note:** users are expected to be created manually (e.g., via Compass) and their `_id` used as the `author` field when creating posts.
+> **Note:** Users can register via the API. Use the `author` field when creating posts.
 
 ## Testing with Postman
 
