@@ -21,6 +21,7 @@ app.use(cookieParser());
 app.use(requestLogger);
 
 // Routes
+app.get('/', (req, res) => res.send('Hello World'));
 app.use('/api/v1', apiRouter);
 
 // Error handler LAST
